@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1830">
+  <meta name="description" content="Portfolio of Trần Lê Mạnh Tuấn: product ownership, business analysis, customer research, UAT, and data-informed product work.">
+  <title>Trần Lê Mạnh Tuấn · Product & Business Analysis</title>
+  <style>
+    :root { --navy:#0d1830; --ink:#18304b; --muted:#60748b; --line:#dce5ef; --paper:#f6f9fc; --white:#fff; --blue:#1870c2; --cyan:#21b7bd; --shadow:0 16px 44px rgba(13,24,48,.09); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.58 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+    a { color:inherit; }
+    button,a { -webkit-tap-highlight-color:transparent; }
+    :focus-visible { outline:3px solid var(--cyan); outline-offset:4px; }
+    .wrap { width:min(1140px,calc(100% - 48px)); margin:auto; }
+    .top { background:var(--navy); color:#f6fbff; overflow:hidden; position:relative; }
+    .top:before { content:""; position:absolute; width:630px; height:630px; right:-130px; top:-225px; border-radius:50%; background:radial-gradient(circle,#1e7d98 0,rgba(30,125,152,.13) 42%,transparent 70%); opacity:.72; }
+    .top:after { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:52px 52px; mask-image:linear-gradient(90deg,transparent 27%,#000); pointer-events:none; }
+    .nav { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:24px 0; gap:24px; }
+    .brand { text-decoration:none; font-weight:760; letter-spacing:-.02em; font-size:19px; }
+    .navlinks { display:flex; align-items:center; gap:27px; font-size:14px; font-weight:650; }
+    .navlinks a { text-decoration:none; color:#c6d7e7; }
+    .navlinks a:hover { color:#fff; }
+    .navlinks a:last-child { color:#fff; border:1px solid rgba(255,255,255,.4); padding:9px 14px; border-radius:8px; }
+    .hero { position:relative; z-index:1; display:grid; grid-template-columns:1.3fr .7fr; gap:46px; align-items:center; padding:84px 0 92px; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; color:#78d5db; text-transform:uppercase; letter-spacing:.16em; font-size:12px; font-weight:800; }
+    .eyebrow:before { content:""; width:20px; height:2px; background:currentColor; }
+    h1,h2,h3,p { margin-top:0; }
+    h1 { margin:20px 0 20px; font-size:clamp(42px,5.1vw,70px); line-height:1.06; letter-spacing:-.052em; max-width:790px; }
+    h1 span { color:#76d2d8; }
+    .hero p { max-width:660px; color:#d1dfed; font-size:19px; line-height:1.58; }
+    .hero-actions { display:flex; flex-wrap:wrap; align-items:center; gap:13px; margin-top:30px; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:45px; padding:11px 18px; text-decoration:none; border-radius:9px; font-size:14px; font-weight:750; transition:transform .18s,background .18s,border-color .18s; }
+    .btn:hover { transform:translateY(-2px); }
+    .btn.primary { color:var(--navy); background:#8ce0e3; }
+    .btn.primary:hover { background:#b0f0ef; }
+    .btn.ghost { color:#e8f1fa; border:1px solid rgba(255,255,255,.35); }
+    .btn.ghost:hover { border-color:#fff; }
+    .hero-card { border:1px solid rgba(255,255,255,.16); border-radius:18px; padding:27px; background:rgba(13,31,57,.76); backdrop-filter:blur(6px); box-shadow:0 20px 80px rgba(0,0,0,.16); }
+    .hero-card .mini { color:#8bd9de; text-transform:uppercase; letter-spacing:.13em; font-size:11px; font-weight:800; }
+    .hero-card strong { display:block; margin:7px 0 16px; font-size:23px; line-height:1.25; letter-spacing:-.025em; }
+    .path { display:grid; gap:8px; }
+    .path div { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,.07); color:#dbe9f6; font-size:13px; }
+    .path b { width:23px; height:23px; flex:0 0 23px; display:grid; place-items:center; border-radius:50%; background:#246579; color:#d9ffff; font-size:11px; }
+    section { scroll-margin-top:30px; }
+    .section { padding:82px 0; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:28px; margin-bottom:28px; }
+    .label { text-transform:uppercase; color:#176b9d; font-size:12px; font-weight:850; letter-spacing:.14em; margin-bottom:10px; }
+    h2 { font-size:clamp(30px,3vw,43px); line-height:1.15; letter-spacing:-.04em; margin-bottom:0; color:#112a46; }
+    .section-head p { max-width:450px; color:var(--muted); margin-bottom:0; }
+    .proof { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-top:-35px; position:relative; z-index:2; }
+    .proof article { padding:21px 23px; border-radius:12px; background:#fff; box-shadow:var(--shadow); border:1px solid var(--line); }
+    .proof strong { display:block; color:#116ca7; font-size:27px; line-height:1.1; letter-spacing:-.035em; }
+    .proof span { display:block; margin-top:7px; color:#526980; font-size:13px; }
+    .cases { display:grid; grid-template-columns:1fr 1fr; gap:19px; }
+    .case { overflow:hidden; border:1px solid var(--line); border-radius:17px; background:#fff; box-shadow:var(--shadow); display:flex; flex-direction:column; }
+    .case.wide { grid-column:1/-1; display:grid; grid-template-columns:.43fr .57fr; }
+    .case-art { min-height:210px; padding:27px; color:#fff; position:relative; overflow:hidden; }
+    .case-art.survey { background:linear-gradient(125deg,#c33944,#7e213b); }
+    .case-art.margin { background:linear-gradient(125deg,#1c619f,#153364); }
+    .case-art.insight { background:linear-gradient(125deg,#165779,#132d4d); }
+    .art-label { font-size:12px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; opacity:.82; }
+    .art-title { font-size:30px; font-weight:800; letter-spacing:-.04em; margin:26px 0 0; line-height:1.1; }
+    .art-sub { font-size:13px; opacity:.84; margin:10px 0 0; }
+    .art-lines { position:absolute; right:22px; bottom:21px; width:42%; display:grid; gap:8px; transform:rotate(-9deg); opacity:.34; }
+    .art-lines span { display:block; height:14px; background:#fff; border-radius:4px; }
+    .art-lines span:nth-child(2) { width:77%; }.art-lines span:nth-child(3) { width:53%; }
+    .case-body { padding:29px 30px 30px; flex:1; display:flex; flex-direction:column; }
+    .tag { width:max-content; padding:5px 8px; border-radius:5px; color:#155f83; background:#e7f4f9; font-size:11px; font-weight:850; letter-spacing:.03em; text-transform:uppercase; }
+    h3 { font-size:23px; line-height:1.2; letter-spacing:-.028em; margin:15px 0 9px; color:#102841; }
+    .case-body>p { color:#536b82; font-size:15px; margin-bottom:16px; }
+    .facts { margin:0 0 22px; padding:0; list-style:none; display:grid; gap:10px; }
+    .facts li { font-size:14px; padding-left:20px; position:relative; }
+    .facts li:before { content:""; position:absolute; top:9px; left:1px; width:8px; height:8px; border-radius:2px; background:var(--cyan); }
+    .case-links { display:flex; flex-wrap:wrap; gap:16px; margin-top:auto; }
+    .case-links a { color:#0e65a0; font-size:14px; font-weight:760; text-decoration-thickness:1px; text-underline-offset:4px; }
+    .process { background:#eaf2f8; }
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px; }
+    .step { border-top:3px solid #167db2; padding:22px 5px 0; }
+    .step .num { color:#1383ad; font-size:12px; font-weight:900; letter-spacing:.12em; }
+    .step h3 { font-size:20px; margin:8px 0; }
+    .step p { color:#546b80; font-size:14px; }
+    .about { display:grid; grid-template-columns:.42fr .58fr; gap:60px; align-items:start; }
+    .about p { color:#526a81; }
+    .details { display:grid; gap:14px; }
+    .detail { display:grid; grid-template-columns:120px 1fr; gap:15px; border-bottom:1px solid var(--line); padding:0 0 13px; font-size:14px; }
+    .detail strong { color:#193d5a; }
+    .detail span { color:#546b80; }
+    .contact { padding:58px 0; color:#fff; background:var(--navy); }
+    .contact-inner { display:flex; justify-content:space-between; align-items:center; gap:28px; }
+    .contact h2 { color:#fff; max-width:620px; }
+    .contact p { color:#c5d4e3; margin:12px 0 0; }
+    footer { background:#091326; color:#9eb4c9; padding:22px 0; font-size:12px; }
+    footer .wrap { display:flex; justify-content:space-between; gap:20px; }
+    @media(max-width:850px) { .hero { grid-template-columns:1fr; padding:55px 0 75px; }.hero-card { max-width:560px; }.section-head,.about,.contact-inner { display:block; }.section-head p { margin-top:15px; }.cases,.case.wide { display:grid; grid-template-columns:1fr; }.case.wide { grid-column:auto; }.steps { grid-template-columns:1fr; }.about { display:grid; gap:24px; }.contact .btn { margin-top:20px; } }
+    @media(max-width:560px) { .wrap { width:min(100% - 32px,1140px); }.nav { align-items:start; }.brand { font-size:16px; }.navlinks { gap:14px; font-size:12px; flex-wrap:wrap; justify-content:flex-end; }.navlinks a:nth-child(2) { display:none; }.navlinks a:last-child { padding:6px 8px; }.hero { padding-top:43px; }.hero p { font-size:17px; }.proof { grid-template-columns:1fr; margin-top:-25px; }.proof article { padding:15px 17px; }.section { padding:60px 0; }.case-body { padding:23px; }.case-art { min-height:180px; }.detail { grid-template-columns:1fr; gap:3px; }.contact { padding:48px 0; } footer .wrap { display:block; } }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }.btn { transition:none; } }
+  </style>
+</head>
+<body>
+  <header class="top" id="top">
+    <div class="wrap">
+      <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="#top">Trần Lê Mạnh Tuấn</a>
+        <div class="navlinks"><a href="#work">Selected work</a><a href="#approach">Approach</a><a href="#about">About</a><a href="#contact">Contact</a></div>
+      </nav>
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Product ownership · Business analysis · Financial technology</div>
+          <h1>From business needs to <span>working products.</span></h1>
+          <p>I turn customer and stakeholder needs into clear workflows, testable business rules, usable prototypes, and data-informed product improvements.</p>
+          <div class="hero-actions"><a class="btn primary" href="#work">Explore case studies <span aria-hidden="true">↗</span></a><a class="btn ghost" href="mailto:manhtuantandinh@gmail.com">Email me</a></div>
+        </div>
+        <aside class="hero-card" aria-label="My product workflow">
+          <div class="mini">How I work</div>
+          <strong>A practical product loop</strong>
+          <div class="path"><div><b>1</b> Discover the user and business problem</div><div><b>2</b> Define flows, rules, and priorities</div><div><b>3</b> Prototype and test the solution</div><div><b>4</b> Measure and improve after launch</div></div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap proof" aria-label="Experience highlights">
+      <article><strong>6</strong><span>Financial products and features supported at SSI</span></article>
+      <article><strong>20+</strong><span>Metrics defined with Data and IT for product reporting</span></article>
+      <article><strong>2</strong><span>Interactive product demos available to explore</span></article>
+    </div>
+
+    <section class="section" id="work">
+      <div class="wrap">
+        <div class="section-head"><div><div class="label">Selected work</div><h2>Projects you can inspect</h2></div><p>Each example shows my contribution and the product thinking behind it. Public demos use sample or browser-local data.</p></div>
+        <div class="cases">
+          <article class="case">
+            <div class="case-art survey"><div class="art-label">Customer discovery</div><div class="art-title">Survey Hub<br>for Brokers</div><div class="art-sub">A repeatable way to build customer surveys</div><div class="art-lines"><span></span><span></span><span></span></div></div>
+            <div class="case-body"><span class="tag">Discovery · Workflow · Prototype</span><h3>Make customer feedback easier to collect</h3><p>Brokers needed a consistent survey process that made objectives, target customers, questions, review, and follow-up clear.</p><ul class="facts"><li>Mapped the survey journey and reusable question templates.</li><li>Built an interactive form builder with preview and local draft storage.</li><li>Analyzed feedback themes to identify customer needs and engagement bottlenecks.</li></ul><div class="case-links"><a href="https://manhtuantandinh-cpu.github.io/SSI-Survey-Hub-for-brokers/" target="_blank" rel="noopener noreferrer">Open live demo ↗</a><a href="https://github.com/manhtuantandinh-cpu/SSI-Survey-Hub-for-brokers" target="_blank" rel="noopener noreferrer">View repository ↗</a></div></div>
+          </article>
+          <article class="case">
+            <div class="case-art margin"><div class="art-label">Product rules</div><div class="art-title">Margin<br>Simulation</div><div class="art-sub">Compare borrowing terms in one flow</div><div class="art-lines"><span></span><span></span><span></span></div></div>
+            <div class="case-body"><span class="tag">Business rules · UX · Testing</span><h3>Turn complex terms into a usable comparison</h3><p>Margin packages can differ by loan amount, tenor, customer rate, promotion, and eligibility, making comparison difficult.</p><ul class="facts"><li>Translated product terms into eligibility and calculation rules.</li><li>Built a browser prototype for side-by-side package comparisons.</li><li>Tested daily borrowing cost and effective-rate scenarios.</li></ul><div class="case-links"><a href="https://margin-simulation.web.app/" target="_blank" rel="noopener noreferrer">Open live demo ↗</a></div></div>
+          </article>
+          <article class="case wide">
+            <div class="case-art insight"><div class="art-label">Validation and reporting</div><div class="art-title">InsightChat UAT<br>& Product Data</div><div class="art-sub">Internal SSI work · public case summary</div><div class="art-lines"><span></span><span></span><span></span></div></div>
+            <div class="case-body"><span class="tag">UAT · Data definitions · Stakeholders</span><h3>Check behavior, then measure performance</h3><p>At SSI, I worked with business, Data, and IT teams on product reporting and the validation of an internal AI agent.</p><ul class="facts"><li>Checked InsightChat business scenarios, response context, and data outputs; documented issues for refinement.</li><li>Defined 20+ metrics across time ranges for a Superset master dataset and weekly product reporting.</li><li>Used SQL and dashboards to review market share, revenue, and outstanding balances for six products/features.</li></ul><div class="case-links"><a href="mailto:manhtuantandinh@gmail.com?subject=Portfolio%20case%20study%20request">Ask about this work ↗</a></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process" id="approach">
+      <div class="wrap"><div class="label">Product approach</div><h2>Evidence before adjectives</h2><div class="steps"><div class="step"><div class="num">01 · UNDERSTAND</div><h3>Start with the real workflow</h3><p>Clarify who uses the product, what decision they need to make, and where the existing process breaks down.</p></div><div class="step"><div class="num">02 · MAKE IT TESTABLE</div><h3>Write flows and rules clearly</h3><p>Translate needs into user flows, business rules, prototypes, and tracked tasks that Business and IT can discuss together.</p></div><div class="step"><div class="num">03 · LEARN FROM USE</div><h3>Validate and improve</h3><p>Test realistic scenarios, log issues, examine customer feedback and performance data, and refine the solution.</p></div></div></div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="wrap about"><div><div class="label">About me</div><h2>Finance background, product mindset</h2></div><div><p>I am a Finance and Banking graduate of the National Economics University. My experience spans product and data analysis at SSI, corporate customer operations at BIDV, and securities research at VPBank Securities.</p><p>I am interested in Product Owner and Business Analyst roles where I can connect user needs, implementation details, and measurable product outcomes.</p><div class="details"><div class="detail"><strong>Core skills</strong><span>Requirement analysis, process mapping, business rules, backlog tracking, UAT, customer research</span></div><div class="detail"><strong>Tools</strong><span>SQL, Superset, Power BI, Excel, Microsoft Planner, Power Automate, HTML/CSS/JavaScript</span></div><div class="detail"><strong>Location</strong><span>Hanoi, Vietnam</span></div></div></div></div>
+    </section>
+  </main>
+
+  <section class="contact" id="contact"><div class="wrap contact-inner"><div><div class="eyebrow">Let's connect</div><h2>Looking for someone who can bridge business and product delivery?</h2><p>I'm open to Product Owner and Business Analyst opportunities in Hanoi.</p></div><div><a class="btn primary" href="mailto:manhtuantandinh@gmail.com">manhtuantandinh@gmail.com ↗</a><p><a href="https://www.linkedin.com/in/m%E1%BA%A1nh-tu%E1%BA%A5n-tr%E1%BA%A7n-l%C3%AA-65b041247/" target="_blank" rel="noopener noreferrer">LinkedIn profile ↗</a></p></div></div></section>
+  <footer><div class="wrap"><span>© 2026 Trần Lê Mạnh Tuấn</span><span>Public demos and summaries do not include SSI internal systems or customer data.</span></div></footer>
+</body>
+</html>
