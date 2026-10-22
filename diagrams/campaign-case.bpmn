@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='utf-8'?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_SSI_LongShort_WC26" targetNamespace="https://portfolio.example/longshort-case-study" exporter="Trần Lê Mạnh Tuấn — independent BA case study" exporterVersion="0.1">
+  <bpmn:process id="Process_LongShort_WC26" name="Long or Short campaign — illustrative to-be process" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_1">
+      <bpmn:lane id="Lane_Customer" name="Khách hàng SSI">
+        <bpmn:flowNodeRef>Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ViewRules</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>VerifyAccount</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Account</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Choose</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Cutoff</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Trade</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_NoAccount</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Expired</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_App" name="Campaign app">
+        <bpmn:flowNodeRef>RecordPrediction</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_DataOps" name="Data / Ops / Finance">
+        <bpmn:flowNodeRef>Ingest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Data</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Pending</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Calculate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Review</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>G_Approval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Rework</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Publish</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Done</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Payout</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start" name="15:00 ngày giao dịch liền trước">
+      <bpmn:outgoing>F01</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="ViewRules" name="Xem thể lệ">
+      <bpmn:incoming>F01</bpmn:incoming>
+      <bpmn:outgoing>F02</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="VerifyAccount" name="Tài khoản SSI/Gmail">
+      <bpmn:incoming>F02</bpmn:incoming>
+      <bpmn:outgoing>F03</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Account" name="Định danh nhập thành công?">
+      <bpmn:incoming>F03</bpmn:incoming>
+      <bpmn:outgoing>F04</bpmn:outgoing>
+      <bpmn:outgoing>F05</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_NoAccount" name="Nhập lại định danh">
+      <bpmn:incoming>F04</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Choose" name="LONG/SHORT 1 lần/ngày">
+      <bpmn:incoming>F05</bpmn:incoming>
+      <bpmn:outgoing>F06</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Cutoff" name="Trước hạn?">
+      <bpmn:incoming>F06</bpmn:incoming>
+      <bpmn:outgoing>F07</bpmn:outgoing>
+      <bpmn:outgoing>F08</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_Expired" name="Hết hạn">
+      <bpmn:incoming>F07</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="RecordPrediction" name="Ghi dự đoán + biên nhận">
+      <bpmn:incoming>F08</bpmn:incoming>
+      <bpmn:outgoing>F09</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Trade" name="Giao dịch ở hệ thống riêng">
+      <bpmn:incoming>F09</bpmn:incoming>
+      <bpmn:outgoing>F10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Ingest" name="VN30 T/phiên trước + giao dịch">
+      <bpmn:incoming>F10</bpmn:incoming>
+      <bpmn:outgoing>F11</bpmn:outgoing>
+      <bpmn:incoming>F13</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Data" name="Đủ dữ liệu?">
+      <bpmn:incoming>F11</bpmn:incoming>
+      <bpmn:outgoing>F12</bpmn:outgoing>
+      <bpmn:outgoing>F14</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Pending" name="PENDING_DATA; điều tra">
+      <bpmn:incoming>F12</bpmn:incoming>
+      <bpmn:outgoing>F13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Calculate" name="Tính giải ngày + rank 3 tiêu chí">
+      <bpmn:incoming>F14</bpmn:incoming>
+      <bpmn:outgoing>F15</bpmn:outgoing>
+      <bpmn:incoming>F18</bpmn:incoming>
+    </bpmn:task>
+    <bpmn:task id="Review" name="Duyệt snapshot">
+      <bpmn:incoming>F15</bpmn:incoming>
+      <bpmn:outgoing>F16</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="G_Approval" name="Duyệt?">
+      <bpmn:incoming>F16</bpmn:incoming>
+      <bpmn:outgoing>F17</bpmn:outgoing>
+      <bpmn:outgoing>F19</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Rework" name="Tạo revision; re-run">
+      <bpmn:incoming>F17</bpmn:incoming>
+      <bpmn:outgoing>F18</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Publish" name="Thông báo email/iBoard; công bố">
+      <bpmn:incoming>F19</bpmn:incoming>
+      <bpmn:outgoing>F20</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_Done" name="Kết thúc; xử lý khiếu nại">
+      <bpmn:incoming>F21</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F01" sourceRef="Start" targetRef="ViewRules" />
+    <bpmn:sequenceFlow id="F02" sourceRef="ViewRules" targetRef="VerifyAccount" />
+    <bpmn:sequenceFlow id="F03" sourceRef="VerifyAccount" targetRef="G_Account" />
+    <bpmn:sequenceFlow id="F04" sourceRef="G_Account" targetRef="End_NoAccount" />
+    <bpmn:sequenceFlow id="F05" sourceRef="G_Account" targetRef="Choose" />
+    <bpmn:sequenceFlow id="F06" sourceRef="Choose" targetRef="G_Cutoff" />
+    <bpmn:sequenceFlow id="F07" sourceRef="G_Cutoff" targetRef="End_Expired" />
+    <bpmn:sequenceFlow id="F08" sourceRef="G_Cutoff" targetRef="RecordPrediction" />
+    <bpmn:sequenceFlow id="F09" sourceRef="RecordPrediction" targetRef="Trade" />
+    <bpmn:sequenceFlow id="F10" sourceRef="Trade" targetRef="Ingest" />
+    <bpmn:sequenceFlow id="F11" sourceRef="Ingest" targetRef="G_Data" />
+    <bpmn:sequenceFlow id="F12" sourceRef="G_Data" targetRef="Pending" />
+    <bpmn:sequenceFlow id="F13" sourceRef="Pending" targetRef="Ingest" />
+    <bpmn:sequenceFlow id="F14" sourceRef="G_Data" targetRef="Calculate" />
+    <bpmn:sequenceFlow id="F15" sourceRef="Calculate" targetRef="Review" />
+    <bpmn:sequenceFlow id="F16" sourceRef="Review" targetRef="G_Approval" />
+    <bpmn:sequenceFlow id="F17" sourceRef="G_Approval" targetRef="Rework" />
+    <bpmn:sequenceFlow id="F18" sourceRef="Rework" targetRef="Calculate" />
+    <bpmn:sequenceFlow id="F19" sourceRef="G_Approval" targetRef="Publish" />
+    <bpmn:sequenceFlow id="F20" sourceRef="Publish" targetRef="Payout" />
+    <bpmn:task id="Payout" name="Chi thưởng/thuế/tài khoản đóng">
+      <bpmn:incoming>F20</bpmn:incoming>
+      <bpmn:outgoing>F21</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="F21" sourceRef="Payout" targetRef="End_Done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="Process_LongShort_WC26">
+      <bpmndi:BPMNShape id="Lane_Customer_di" bpmnElement="Lane_Customer" isHorizontal="true">
+        <dc:Bounds x="100" y="100" width="3000" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_App_di" bpmnElement="Lane_App" isHorizontal="true">
+        <dc:Bounds x="100" y="260" width="3000" height="145" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_DataOps_di" bpmnElement="Lane_DataOps" isHorizontal="true">
+        <dc:Bounds x="100" y="405" width="3000" height="300" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_di" bpmnElement="Start">
+        <dc:Bounds x="180" y="155" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ViewRules_di" bpmnElement="ViewRules">
+        <dc:Bounds x="285" y="135" width="120" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="VerifyAccount_di" bpmnElement="VerifyAccount">
+        <dc:Bounds x="455" y="135" width="130" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Account_di" bpmnElement="G_Account">
+        <dc:Bounds x="645" y="148" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_NoAccount_di" bpmnElement="End_NoAccount">
+        <dc:Bounds x="655" y="290" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Choose_di" bpmnElement="Choose">
+        <dc:Bounds x="765" y="135" width="130" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Cutoff_di" bpmnElement="G_Cutoff">
+        <dc:Bounds x="955" y="148" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Expired_di" bpmnElement="End_Expired">
+        <dc:Bounds x="965" y="290" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="RecordPrediction_di" bpmnElement="RecordPrediction">
+        <dc:Bounds x="1080" y="275" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Trade_di" bpmnElement="Trade">
+        <dc:Bounds x="1290" y="135" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Ingest_di" bpmnElement="Ingest">
+        <dc:Bounds x="1500" y="465" width="140" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Data_di" bpmnElement="G_Data">
+        <dc:Bounds x="1700" y="478" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Pending_di" bpmnElement="Pending">
+        <dc:Bounds x="1700" y="585" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Calculate_di" bpmnElement="Calculate">
+        <dc:Bounds x="1910" y="465" width="150" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Review_di" bpmnElement="Review">
+        <dc:Bounds x="2120" y="465" width="135" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="G_Approval_di" bpmnElement="G_Approval">
+        <dc:Bounds x="2320" y="478" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Rework_di" bpmnElement="Rework">
+        <dc:Bounds x="2300" y="585" width="155" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Publish_di" bpmnElement="Publish">
+        <dc:Bounds x="2500" y="465" width="145" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Done_di" bpmnElement="End_Done">
+        <dc:Bounds x="2940" y="485" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F01_di" bpmnElement="F01">
+        <di:waypoint x="216" y="173.0" />
+        <di:waypoint x="285" y="172.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F02_di" bpmnElement="F02">
+        <di:waypoint x="405" y="172.5" />
+        <di:waypoint x="455" y="172.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F03_di" bpmnElement="F03">
+        <di:waypoint x="585" y="172.5" />
+        <di:waypoint x="645" y="173.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F04_di" bpmnElement="F04">
+        <di:waypoint x="670.0" y="198" />
+        <di:waypoint x="670.0" y="275" />
+        <di:waypoint x="673.0" y="275" />
+        <di:waypoint x="673.0" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F05_di" bpmnElement="F05">
+        <di:waypoint x="695" y="173.0" />
+        <di:waypoint x="765" y="172.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F06_di" bpmnElement="F06">
+        <di:waypoint x="895" y="172.5" />
+        <di:waypoint x="955" y="173.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F07_di" bpmnElement="F07">
+        <di:waypoint x="980.0" y="198" />
+        <di:waypoint x="980.0" y="275" />
+        <di:waypoint x="983.0" y="275" />
+        <di:waypoint x="983.0" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F08_di" bpmnElement="F08">
+        <di:waypoint x="1005" y="173.0" />
+        <di:waypoint x="1080" y="312.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F09_di" bpmnElement="F09">
+        <di:waypoint x="1225" y="312.5" />
+        <di:waypoint x="1290" y="172.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10">
+        <di:waypoint x="1435" y="172.5" />
+        <di:waypoint x="1500" y="502.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11">
+        <di:waypoint x="1640" y="502.5" />
+        <di:waypoint x="1700" y="503.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12">
+        <di:waypoint x="1725.0" y="528" />
+        <di:waypoint x="1725.0" y="570" />
+        <di:waypoint x="1772.5" y="570" />
+        <di:waypoint x="1772.5" y="585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13">
+        <di:waypoint x="1772.5" y="660" />
+        <di:waypoint x="1772.5" y="685" />
+        <di:waypoint x="1570.0" y="685" />
+        <di:waypoint x="1570.0" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14">
+        <di:waypoint x="1750" y="503.0" />
+        <di:waypoint x="1910" y="502.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15">
+        <di:waypoint x="2060" y="502.5" />
+        <di:waypoint x="2120" y="502.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F16_di" bpmnElement="F16">
+        <di:waypoint x="2255" y="502.5" />
+        <di:waypoint x="2320" y="503.0" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F17_di" bpmnElement="F17">
+        <di:waypoint x="2345.0" y="528" />
+        <di:waypoint x="2345.0" y="570" />
+        <di:waypoint x="2377.5" y="570" />
+        <di:waypoint x="2377.5" y="585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F18_di" bpmnElement="F18">
+        <di:waypoint x="2377.5" y="660" />
+        <di:waypoint x="2377.5" y="685" />
+        <di:waypoint x="1985.0" y="685" />
+        <di:waypoint x="1985.0" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F19_di" bpmnElement="F19">
+        <di:waypoint x="2370" y="503.0" />
+        <di:waypoint x="2500" y="502.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F20_di" bpmnElement="F20">
+        <di:waypoint x="2645" y="502.5" />
+        <di:waypoint x="2690" y="502.5" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Payout_di" bpmnElement="Payout">
+        <dc:Bounds x="2690" y="465" width="180" height="75" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="F21_di" bpmnElement="F21">
+        <di:waypoint x="2870" y="502.5" />
+        <di:waypoint x="2940" y="503" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
