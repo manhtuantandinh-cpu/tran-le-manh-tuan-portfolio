@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?><bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_MarginTrading" targetNamespace="https://example.org/illustrative-bpmn" exporter="Trần Lê Mạnh Tuấn Portfolio" exporterVersion="public-illustrative">
+  <bpmn:process id="Process_MarginTrading" name="Margin Trading Journey (Illustrative)" isExecutable="false">
+    <bpmn:documentation>Quy trình tổng quát từ đăng ký dịch vụ margin, kiểm tra lệnh, khớp lệnh, theo dõi tỷ lệ ký quỹ đến margin call và bán giải chấp.</bpmn:documentation>
+    <bpmn:laneSet id="LaneSet_MarginTrading">
+      <bpmn:lane id="Lane_Market" name="Thị trường">
+        <bpmn:flowNodeRef>Task_OrderPending</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_OrderMatched</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ForcedSale</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_OrderMatched</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_RiskManagement" name="Quản trị rủi ro">
+        <bpmn:flowNodeRef>Task_MonitorRisk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ApproveForcedSale</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_TradingSystem" name="Hệ thống giao dịch">
+        <bpmn:flowNodeRef>Task_CheckEligibility</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RejectRegistration</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ActivateMargin</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CheckBuyingPower</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CheckMarginSecurity</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CheckLoanLimit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RejectOrder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SendOrder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_UpdateLoanCollateral</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CalculateMarginRatio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SendMarginCall</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RecheckMarginRatio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_RegistrationRejected</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_OrderValid</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_MarginSafe</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_MarginCallDeadline</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Remediated</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Eligible</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Customer" name="Khách hàng">
+        <bpmn:flowNodeRef>Task_RegisterMargin</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CreateOrder</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_MonitorPortfolio</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SellSecurities</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_TopUpCollateral</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_Begin</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_ContinueTrading</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Normal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_CustomerResponse</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_Begin" name="Bắt đầu"/>
+    <bpmn:task id="Task_RegisterMargin" name="Đăng ký dịch vụ margin"/>
+    <bpmn:task id="Task_CheckEligibility" name="Kiểm tra điều kiện sử dụng margin"/>
+    <bpmn:exclusiveGateway id="Gateway_Eligible" name="Đủ điều kiện?" default="Flow_NotEligible"/>
+    <bpmn:task id="Task_RejectRegistration" name="Thông báo từ chối đăng ký"/>
+    <bpmn:endEvent id="EndEvent_RegistrationRejected" name="Kết thúc"/>
+    <bpmn:task id="Task_ActivateMargin" name="Kích hoạt tài khoản margin"/>
+    <bpmn:task id="Task_CreateOrder" name="Chọn mã và nhập lệnh"/>
+    <bpmn:task id="Task_CheckBuyingPower" name="Kiểm tra sức mua"/>
+    <bpmn:task id="Task_CheckMarginSecurity" name="Kiểm tra mã thuộc danh mục margin"/>
+    <bpmn:task id="Task_CheckLoanLimit" name="Kiểm tra tỷ lệ cho vay và hạn mức"/>
+    <bpmn:exclusiveGateway id="Gateway_OrderValid" name="Lệnh hợp lệ?" default="Flow_OrderInvalid"/>
+    <bpmn:task id="Task_RejectOrder" name="Thông báo từ chối lệnh"/>
+    <bpmn:task id="Task_SendOrder" name="Gửi lệnh ra thị trường"/>
+    <bpmn:exclusiveGateway id="Gateway_OrderMatched" name="Lệnh được khớp?" default="Flow_NotMatched"/>
+    <bpmn:task id="Task_OrderPending" name="Lệnh chờ, sửa hoặc hủy"/>
+    <bpmn:task id="Task_OrderMatched" name="Khớp toàn bộ hoặc một phần"/>
+    <bpmn:task id="Task_UpdateLoanCollateral" name="Cập nhật tiền vay và tài sản bảo đảm"/>
+    <bpmn:task id="Task_MonitorRisk" name="Giám sát danh mục và hạn mức"/>
+    <bpmn:task id="Task_CalculateMarginRatio" name="Tính tỷ lệ ký quỹ theo giá thị trường"/>
+    <bpmn:exclusiveGateway id="Gateway_MarginSafe" name="Tỷ lệ ký quỹ an toàn?" default="Flow_MarginUnsafe"/>
+    <bpmn:task id="Task_MonitorPortfolio" name="Theo dõi danh mục và tỷ lệ ký quỹ"/>
+    <bpmn:exclusiveGateway id="Gateway_ContinueTrading" name="Tiếp tục giao dịch?" default="Flow_StopTrading"/>
+    <bpmn:endEvent id="EndEvent_Normal" name="Kết thúc"/>
+    <bpmn:task id="Task_SendMarginCall" name="Gửi cảnh báo margin call"/>
+    <bpmn:exclusiveGateway id="Gateway_CustomerResponse" name="Khách hàng xử lý thế nào?" default="Flow_NoResponse"/>
+    <bpmn:task id="Task_TopUpCollateral" name="Nộp thêm tiền hoặc chứng khoán"/>
+    <bpmn:task id="Task_SellSecurities" name="Chủ động bán bớt chứng khoán"/>
+    <bpmn:intermediateCatchEvent id="Event_MarginCallDeadline" name="Hết thời hạn bổ sung">
+      <bpmn:timerEventDefinition id="TimerEventDefinition_MarginCallDeadline">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="Task_RecheckMarginRatio" name="Kiểm tra lại tỷ lệ ký quỹ"/>
+    <bpmn:exclusiveGateway id="Gateway_Remediated" name="Đã khắc phục đúng hạn?" default="Flow_NotRemediated"/>
+    <bpmn:task id="Task_ApproveForcedSale" name="Phê duyệt bán giải chấp"/>
+    <bpmn:task id="Task_ForcedSale" name="Thực hiện bán giải chấp"/>
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_Begin" targetRef="Task_RegisterMargin"/>
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_RegisterMargin" targetRef="Task_CheckEligibility"/>
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_CheckEligibility" targetRef="Gateway_Eligible"/>
+    <bpmn:sequenceFlow id="Flow_Eligible" name="Có" sourceRef="Gateway_Eligible" targetRef="Task_ActivateMargin">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">eligible</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NotEligible" name="Không" sourceRef="Gateway_Eligible" targetRef="Task_RejectRegistration"/>
+    <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_RejectRegistration" targetRef="EndEvent_RegistrationRejected"/>
+    <bpmn:sequenceFlow id="Flow_06" sourceRef="Task_ActivateMargin" targetRef="Task_CreateOrder"/>
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_CreateOrder" targetRef="Task_CheckBuyingPower"/>
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_CheckBuyingPower" targetRef="Task_CheckMarginSecurity"/>
+    <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_CheckMarginSecurity" targetRef="Task_CheckLoanLimit"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_CheckLoanLimit" targetRef="Gateway_OrderValid"/>
+    <bpmn:sequenceFlow id="Flow_OrderValid" name="Có" sourceRef="Gateway_OrderValid" targetRef="Task_SendOrder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">orderValid</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_OrderInvalid" name="Không" sourceRef="Gateway_OrderValid" targetRef="Task_RejectOrder"/>
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Task_RejectOrder" targetRef="Task_CreateOrder"/>
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_SendOrder" targetRef="Gateway_OrderMatched"/>
+    <bpmn:sequenceFlow id="Flow_Matched" name="Có" sourceRef="Gateway_OrderMatched" targetRef="Task_OrderMatched">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">matched</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NotMatched" name="Không" sourceRef="Gateway_OrderMatched" targetRef="Task_OrderPending"/>
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_OrderPending" targetRef="Task_CreateOrder"/>
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_OrderMatched" targetRef="Task_UpdateLoanCollateral"/>
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_UpdateLoanCollateral" targetRef="Task_MonitorRisk"/>
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="Task_MonitorRisk" targetRef="Task_CalculateMarginRatio"/>
+    <bpmn:sequenceFlow id="Flow_21" sourceRef="Task_CalculateMarginRatio" targetRef="Gateway_MarginSafe"/>
+    <bpmn:sequenceFlow id="Flow_MarginSafe" name="Có" sourceRef="Gateway_MarginSafe" targetRef="Task_MonitorPortfolio">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">marginSafe</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_MarginUnsafe" name="Không" sourceRef="Gateway_MarginSafe" targetRef="Task_SendMarginCall"/>
+    <bpmn:sequenceFlow id="Flow_24" sourceRef="Task_MonitorPortfolio" targetRef="Gateway_ContinueTrading"/>
+    <bpmn:sequenceFlow id="Flow_ContinueTrading" name="Có" sourceRef="Gateway_ContinueTrading" targetRef="Task_CreateOrder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">continueTrading</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_StopTrading" name="Không" sourceRef="Gateway_ContinueTrading" targetRef="EndEvent_Normal"/>
+    <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_SendMarginCall" targetRef="Gateway_CustomerResponse"/>
+    <bpmn:sequenceFlow id="Flow_TopUp" name="Nộp bổ sung" sourceRef="Gateway_CustomerResponse" targetRef="Task_TopUpCollateral">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">topUp</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_VoluntarySale" name="Bán bớt" sourceRef="Gateway_CustomerResponse" targetRef="Task_SellSecurities">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">voluntarySale</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NoResponse" name="Không xử lý" sourceRef="Gateway_CustomerResponse" targetRef="Event_MarginCallDeadline"/>
+    <bpmn:sequenceFlow id="Flow_31" sourceRef="Task_TopUpCollateral" targetRef="Task_RecheckMarginRatio"/>
+    <bpmn:sequenceFlow id="Flow_32" sourceRef="Task_SellSecurities" targetRef="Task_RecheckMarginRatio"/>
+    <bpmn:sequenceFlow id="Flow_33" sourceRef="Event_MarginCallDeadline" targetRef="Task_RecheckMarginRatio"/>
+    <bpmn:sequenceFlow id="Flow_34" sourceRef="Task_RecheckMarginRatio" targetRef="Gateway_Remediated"/>
+    <bpmn:sequenceFlow id="Flow_Remediated" name="Có" sourceRef="Gateway_Remediated" targetRef="Task_MonitorPortfolio">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">remediated</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NotRemediated" name="Không" sourceRef="Gateway_Remediated" targetRef="Task_ApproveForcedSale"/>
+    <bpmn:sequenceFlow id="Flow_37" sourceRef="Task_ApproveForcedSale" targetRef="Task_ForcedSale"/>
+    <bpmn:sequenceFlow id="Flow_38" sourceRef="Task_ForcedSale" targetRef="Task_UpdateLoanCollateral"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_MarginTrading">
+    <bpmndi:BPMNPlane id="BPMNPlane_MarginTrading" bpmnElement="Process_MarginTrading">
+      <bpmndi:BPMNShape id="Lane_Market_di" bpmnElement="Lane_Market" isHorizontal="true">
+        <dc:Bounds x="160" y="760" width="4050" height="160"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_RiskManagement_di" bpmnElement="Lane_RiskManagement" isHorizontal="true">
+        <dc:Bounds x="160" y="620" width="4050" height="140"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_TradingSystem_di" bpmnElement="Lane_TradingSystem" isHorizontal="true">
+        <dc:Bounds x="160" y="350" width="4050" height="270"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Customer_di" bpmnElement="Lane_Customer" isHorizontal="true">
+        <dc:Bounds x="160" y="160" width="4050" height="190"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_Begin_di" bpmnElement="StartEvent_Begin">
+        <dc:Bounds x="230" y="225" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="229" y="261" width="38" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RegisterMargin_di" bpmnElement="Task_RegisterMargin">
+        <dc:Bounds x="305" y="203" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckEligibility_di" bpmnElement="Task_CheckEligibility">
+        <dc:Bounds x="480" y="425" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Eligible_di" bpmnElement="Gateway_Eligible" isMarkerVisible="true">
+        <dc:Bounds x="660" y="440" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="720" y="458" width="68" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RejectRegistration_di" bpmnElement="Task_RejectRegistration">
+        <dc:Bounds x="760" y="375" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_RegistrationRejected_di" bpmnElement="EndEvent_RegistrationRejected">
+        <dc:Bounds x="930" y="397" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="928" y="433" width="41" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ActivateMargin_di" bpmnElement="Task_ActivateMargin">
+        <dc:Bounds x="760" y="515" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreateOrder_di" bpmnElement="Task_CreateOrder">
+        <dc:Bounds x="1020" y="203" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckBuyingPower_di" bpmnElement="Task_CheckBuyingPower">
+        <dc:Bounds x="1190" y="425" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckMarginSecurity_di" bpmnElement="Task_CheckMarginSecurity">
+        <dc:Bounds x="1360" y="425" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CheckLoanLimit_di" bpmnElement="Task_CheckLoanLimit">
+        <dc:Bounds x="1550" y="425" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_OrderValid_di" bpmnElement="Gateway_OrderValid" isMarkerVisible="true">
+        <dc:Bounds x="1740" y="440" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1733" y="490" width="65" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RejectOrder_di" bpmnElement="Task_RejectOrder">
+        <dc:Bounds x="1840" y="375" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendOrder_di" bpmnElement="Task_SendOrder">
+        <dc:Bounds x="1840" y="515" width="120" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_OrderMatched_di" bpmnElement="Gateway_OrderMatched" isMarkerVisible="true">
+        <dc:Bounds x="2030" y="815" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2011" y="865" width="88" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_OrderPending_di" bpmnElement="Task_OrderPending">
+        <dc:Bounds x="2130" y="770" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_OrderMatched_di" bpmnElement="Task_OrderMatched">
+        <dc:Bounds x="2130" y="845" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_UpdateLoanCollateral_di" bpmnElement="Task_UpdateLoanCollateral">
+        <dc:Bounds x="2300" y="515" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_MonitorRisk_di" bpmnElement="Task_MonitorRisk">
+        <dc:Bounds x="2490" y="650" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CalculateMarginRatio_di" bpmnElement="Task_CalculateMarginRatio">
+        <dc:Bounds x="2670" y="515" width="150" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_MarginSafe_di" bpmnElement="Gateway_MarginSafe" isMarkerVisible="true">
+        <dc:Bounds x="2870" y="530" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2858" y="580" width="74" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_MonitorPortfolio_di" bpmnElement="Task_MonitorPortfolio">
+        <dc:Bounds x="3000" y="180" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_ContinueTrading_di" bpmnElement="Gateway_ContinueTrading" isMarkerVisible="true">
+        <dc:Bounds x="3190" y="195" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3184" y="245" width="63" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Normal_di" bpmnElement="EndEvent_Normal">
+        <dc:Bounds x="3340" y="202" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3338" y="238" width="41" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendMarginCall_di" bpmnElement="Task_SendMarginCall">
+        <dc:Bounds x="3000" y="515" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_CustomerResponse_di" bpmnElement="Gateway_CustomerResponse" isMarkerVisible="true">
+        <dc:Bounds x="3190" y="280" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3250" y="291" width="86" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SellSecurities_di" bpmnElement="Task_SellSecurities">
+        <dc:Bounds x="3340" y="260" width="140" height="70"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_MarginCallDeadline_di" bpmnElement="Event_MarginCallDeadline">
+        <dc:Bounds x="3392" y="450" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3372" y="486" width="76" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RecheckMarginRatio_di" bpmnElement="Task_RecheckMarginRatio">
+        <dc:Bounds x="3540" y="410" width="140" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Remediated_di" bpmnElement="Gateway_Remediated" isMarkerVisible="true">
+        <dc:Bounds x="3730" y="425" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3721" y="475" width="68" height="27"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ApproveForcedSale_di" bpmnElement="Task_ApproveForcedSale">
+        <dc:Bounds x="3860" y="650" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ForcedSale_di" bpmnElement="Task_ForcedSale">
+        <dc:Bounds x="4040" y="800" width="130" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_TopUpCollateral_di" bpmnElement="Task_TopUpCollateral">
+        <dc:Bounds x="3540" y="165" width="140" height="70"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
+        <di:waypoint x="266" y="243"/>
+        <di:waypoint x="305" y="243"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02">
+        <di:waypoint x="425" y="243"/>
+        <di:waypoint x="450" y="243"/>
+        <di:waypoint x="450" y="465"/>
+        <di:waypoint x="480" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03">
+        <di:waypoint x="610" y="465"/>
+        <di:waypoint x="660" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Eligible_di" bpmnElement="Flow_Eligible">
+        <di:waypoint x="685" y="490"/>
+        <di:waypoint x="685" y="555"/>
+        <di:waypoint x="760" y="555"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="702" y="532" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NotEligible_di" bpmnElement="Flow_NotEligible">
+        <di:waypoint x="685" y="440"/>
+        <di:waypoint x="685" y="415"/>
+        <di:waypoint x="760" y="415"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="704" y="393" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05">
+        <di:waypoint x="890" y="415"/>
+        <di:waypoint x="930" y="415"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06_di" bpmnElement="Flow_06">
+        <di:waypoint x="890" y="555"/>
+        <di:waypoint x="990" y="555"/>
+        <di:waypoint x="990" y="243"/>
+        <di:waypoint x="1020" y="243"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07_di" bpmnElement="Flow_07">
+        <di:waypoint x="1140" y="243"/>
+        <di:waypoint x="1160" y="243"/>
+        <di:waypoint x="1160" y="465"/>
+        <di:waypoint x="1190" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08_di" bpmnElement="Flow_08">
+        <di:waypoint x="1310" y="465"/>
+        <di:waypoint x="1360" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09_di" bpmnElement="Flow_09">
+        <di:waypoint x="1500" y="465"/>
+        <di:waypoint x="1550" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="1690" y="465"/>
+        <di:waypoint x="1740" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_OrderValid_di" bpmnElement="Flow_OrderValid">
+        <di:waypoint x="1765" y="490"/>
+        <di:waypoint x="1765" y="555"/>
+        <di:waypoint x="1840" y="555"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1782" y="532" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_OrderInvalid_di" bpmnElement="Flow_OrderInvalid">
+        <di:waypoint x="1765" y="440"/>
+        <di:waypoint x="1765" y="415"/>
+        <di:waypoint x="1840" y="415"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1784" y="393" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13_di" bpmnElement="Flow_13">
+        <di:waypoint x="1900" y="375"/>
+        <di:waypoint x="1900" y="140"/>
+        <di:waypoint x="1080" y="140"/>
+        <di:waypoint x="1080" y="203"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <di:waypoint x="1960" y="555"/>
+        <di:waypoint x="1995" y="555"/>
+        <di:waypoint x="1995" y="840"/>
+        <di:waypoint x="2030" y="840"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Matched_di" bpmnElement="Flow_Matched">
+        <di:waypoint x="2080" y="840"/>
+        <di:waypoint x="2105" y="840"/>
+        <di:waypoint x="2105" y="875"/>
+        <di:waypoint x="2130" y="875"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2092" y="858" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NotMatched_di" bpmnElement="Flow_NotMatched">
+        <di:waypoint x="2055" y="815"/>
+        <di:waypoint x="2055" y="800"/>
+        <di:waypoint x="2130" y="800"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2074" y="778" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17_di" bpmnElement="Flow_17">
+        <di:waypoint x="2190" y="770"/>
+        <di:waypoint x="2190" y="120"/>
+        <di:waypoint x="1080" y="120"/>
+        <di:waypoint x="1080" y="203"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18">
+        <di:waypoint x="2250" y="875"/>
+        <di:waypoint x="2275" y="875"/>
+        <di:waypoint x="2275" y="555"/>
+        <di:waypoint x="2300" y="555"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
+        <di:waypoint x="2440" y="555"/>
+        <di:waypoint x="2465" y="555"/>
+        <di:waypoint x="2465" y="690"/>
+        <di:waypoint x="2490" y="690"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
+        <di:waypoint x="2620" y="690"/>
+        <di:waypoint x="2645" y="690"/>
+        <di:waypoint x="2645" y="555"/>
+        <di:waypoint x="2670" y="555"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
+        <di:waypoint x="2820" y="555"/>
+        <di:waypoint x="2870" y="555"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_MarginSafe_di" bpmnElement="Flow_MarginSafe">
+        <di:waypoint x="2895" y="530"/>
+        <di:waypoint x="2895" y="220"/>
+        <di:waypoint x="3000" y="220"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2912" y="198" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_MarginUnsafe_di" bpmnElement="Flow_MarginUnsafe">
+        <di:waypoint x="2920" y="555"/>
+        <di:waypoint x="3000" y="555"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2944" y="533" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
+        <di:waypoint x="3140" y="220"/>
+        <di:waypoint x="3190" y="220"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ContinueTrading_di" bpmnElement="Flow_ContinueTrading">
+        <di:waypoint x="3215" y="195"/>
+        <di:waypoint x="3215" y="100"/>
+        <di:waypoint x="1080" y="100"/>
+        <di:waypoint x="1080" y="203"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3122" y="78" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_StopTrading_di" bpmnElement="Flow_StopTrading">
+        <di:waypoint x="3240" y="220"/>
+        <di:waypoint x="3340" y="220"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3269" y="198" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27">
+        <di:waypoint x="3130" y="555"/>
+        <di:waypoint x="3165" y="555"/>
+        <di:waypoint x="3165" y="305"/>
+        <di:waypoint x="3190" y="305"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_TopUp_di" bpmnElement="Flow_TopUp">
+        <di:waypoint x="3215" y="280"/>
+        <di:waypoint x="3215" y="200"/>
+        <di:waypoint x="3540" y="200"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3342" y="178" width="63" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_VoluntarySale_di" bpmnElement="Flow_VoluntarySale">
+        <di:waypoint x="3240" y="305"/>
+        <di:waypoint x="3340" y="295"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3264" y="280" width="40" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NoResponse_di" bpmnElement="Flow_NoResponse">
+        <di:waypoint x="3215" y="330"/>
+        <di:waypoint x="3215" y="468"/>
+        <di:waypoint x="3392" y="468"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3248" y="446" width="59" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_31_di" bpmnElement="Flow_31">
+        <di:waypoint x="3540" y="200"/>
+        <di:waypoint x="3510" y="200"/>
+        <di:waypoint x="3510" y="450"/>
+        <di:waypoint x="3540" y="450"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_32_di" bpmnElement="Flow_32">
+        <di:waypoint x="3480" y="295"/>
+        <di:waypoint x="3510" y="295"/>
+        <di:waypoint x="3510" y="450"/>
+        <di:waypoint x="3540" y="450"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_33_di" bpmnElement="Flow_33">
+        <di:waypoint x="3428" y="468"/>
+        <di:waypoint x="3540" y="468"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_34_di" bpmnElement="Flow_34">
+        <di:waypoint x="3680" y="450"/>
+        <di:waypoint x="3730" y="450"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Remediated_di" bpmnElement="Flow_Remediated">
+        <di:waypoint x="3755" y="425"/>
+        <di:waypoint x="3755" y="150"/>
+        <di:waypoint x="3070" y="150"/>
+        <di:waypoint x="3070" y="180"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3562" y="128" width="15" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_NotRemediated_di" bpmnElement="Flow_NotRemediated">
+        <di:waypoint x="3755" y="475"/>
+        <di:waypoint x="3755" y="690"/>
+        <di:waypoint x="3860" y="690"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3774" y="668" width="32" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_37_di" bpmnElement="Flow_37">
+        <di:waypoint x="3990" y="690"/>
+        <di:waypoint x="4015" y="690"/>
+        <di:waypoint x="4015" y="840"/>
+        <di:waypoint x="4040" y="840"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_38_di" bpmnElement="Flow_38">
+        <di:waypoint x="4170" y="840"/>
+        <di:waypoint x="4190" y="840"/>
+        <di:waypoint x="4190" y="940"/>
+        <di:waypoint x="2370" y="940"/>
+        <di:waypoint x="2370" y="595"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

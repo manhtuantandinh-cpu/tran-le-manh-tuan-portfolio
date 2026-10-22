@@ -87,6 +87,18 @@
     .ba-output { display:flex; flex-wrap:wrap; gap:9px; margin-top:24px; align-items:center; }
     .ba-output span { color:#526b83; font-size:13px; font-weight:750; margin-right:5px; }
     .ba-output b { color:#185c80; background:#dceef5; padding:7px 10px; border-radius:6px; font-size:12px; font-weight:750; }
+    .bpmn-gallery { border-top:1px solid #cbdde8; margin-top:42px; padding-top:35px; }
+    .bpmn-gallery h3 { font-size:27px; margin:8px 0 8px; }
+    .bpmn-gallery>p { color:#526b83; max-width:780px; margin-bottom:24px; }
+    .diagram-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .diagram-card { overflow:hidden; background:#fff; border:1px solid var(--line); border-radius:15px; box-shadow:0 10px 28px rgba(13,24,48,.05); }
+    .diagram-preview { display:block; height:215px; padding:14px; background:#fff; border-bottom:1px solid var(--line); }
+    .diagram-preview img { display:block; width:100%; height:100%; object-fit:contain; }
+    .diagram-copy { padding:20px 22px 23px; }
+    .diagram-copy .diagram-type { color:#176b9d; font-size:11px; font-weight:850; text-transform:uppercase; letter-spacing:.12em; }
+    .diagram-copy h4 { color:#102841; font-size:19px; line-height:1.24; margin:9px 0; letter-spacing:-.02em; }
+    .diagram-copy p { color:#536b82; font-size:13px; margin:0 0 15px; }
+    .diagram-copy a { color:#0e65a0; font-size:13px; font-weight:800; text-decoration-thickness:1px; text-underline-offset:4px; }
     .process { background:#eaf2f8; }
     .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px; }
     .step { border-top:3px solid #167db2; padding:22px 5px 0; }
@@ -105,7 +117,7 @@
     .contact p { color:#c5d4e3; margin:12px 0 0; }
     footer { background:#091326; color:#9eb4c9; padding:22px 0; font-size:12px; }
     footer .wrap { display:flex; justify-content:space-between; gap:20px; }
-    @media(max-width:850px) { .hero { grid-template-columns:1fr; padding:55px 0 75px; }.hero-card { max-width:560px; }.section-head,.about,.contact-inner { display:block; }.section-head p { margin-top:15px; }.cases,.case.wide { display:grid; grid-template-columns:1fr; }.case.wide { grid-column:auto; }.ba-grid { grid-template-columns:1fr; }.steps { grid-template-columns:1fr; }.about { display:grid; gap:24px; }.contact .btn { margin-top:20px; } }
+    @media(max-width:850px) { .hero { grid-template-columns:1fr; padding:55px 0 75px; }.hero-card { max-width:560px; }.section-head,.about,.contact-inner { display:block; }.section-head p { margin-top:15px; }.cases,.case.wide { display:grid; grid-template-columns:1fr; }.case.wide { grid-column:auto; }.ba-grid,.diagram-cards { grid-template-columns:1fr; }.steps { grid-template-columns:1fr; }.about { display:grid; gap:24px; }.contact .btn { margin-top:20px; } }
     @media(max-width:560px) { .wrap { width:min(100% - 32px,1140px); }.nav { align-items:start; }.brand { font-size:16px; }.navlinks { gap:14px; font-size:12px; flex-wrap:wrap; justify-content:flex-end; }.navlinks a:nth-child(3) { display:none; }.navlinks a:last-child { padding:6px 8px; }.hero { padding-top:43px; }.hero p { font-size:17px; }.proof { grid-template-columns:1fr; margin-top:-25px; }.proof article { padding:15px 17px; }.section { padding:60px 0; }.case-body { padding:23px; }.case-art { min-height:180px; }.ba-card { padding:22px; }.detail { grid-template-columns:1fr; gap:3px; }.contact { padding:48px 0; } footer .wrap { display:block; } }
     @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }.btn { transition:none; } }
   </style>
@@ -169,7 +181,16 @@
           <article class="ba-card"><div class="ba-number">03 · TEST & IMPROVE</div><h3>Validate against real scenarios</h3><p>Check expected behavior, record gaps, and use feedback or data to guide the next iteration.</p><div class="ba-example"><strong>InsightChat at SSI:</strong> tested business scenarios and response context, documented issues, and worked with Data and IT on metric definitions and reporting outputs.</div></article>
         </div>
         <div class="ba-output" aria-label="Business analysis outputs"><span>Outputs illustrated here</span><b>Process flows</b><b>Business rules</b><b>Clickable prototypes</b><b>UAT findings</b><b>Data definitions</b></div>
-        <!-- Add approved BPMN diagrams and short case captions here when supplied. -->
+        <div class="bpmn-gallery" id="bpmn">
+          <div class="label">Process modeling · BPMN</div>
+          <h3>Three process maps I created</h3>
+          <p>These illustrative, sanitized models show how I describe stakeholder handoffs, decision rules, and exception paths. Open a diagram to zoom and inspect the full flow.</p>
+          <div class="diagram-cards">
+            <article class="diagram-card"><a class="diagram-preview" href="diagram.html?diagram=survey" aria-label="Open broker customer survey BPMN diagram"><img src="diagrams/broker-survey.svg" alt="Preview of a four-lane customer survey process"></a><div class="diagram-copy"><div class="diagram-type">4 lanes · Stakeholder handoffs</div><h4>Broker customer survey</h4><p>From survey goals and customer selection to approvals, distribution, and insight review.</p><a href="diagram.html?diagram=survey">Explore BPMN diagram ↗</a></div></article>
+            <article class="diagram-card"><a class="diagram-preview" href="diagram.html?diagram=margin" aria-label="Open margin trading BPMN diagram"><img src="diagrams/margin-trading.svg" alt="Preview of a margin trading process with risk decision gateways"></a><div class="diagram-copy"><div class="diagram-type">Risk decisions · Exception paths</div><h4>Margin trading journey</h4><p>Eligibility, buying power, order handling, monitoring, margin call, and resolution paths.</p><a href="diagram.html?diagram=margin">Explore BPMN diagram ↗</a></div></article>
+            <article class="diagram-card"><a class="diagram-preview" href="diagram.html?diagram=trade" aria-label="Open stock buy-order BPMN diagram"><img src="diagrams/stock-order.svg" alt="Preview of a securities app buy-order process"></a><div class="diagram-copy"><div class="diagram-type">System flow · Validation</div><h4>Stock buy-order flow</h4><p>Account checks, order entry, balance validation, exchange matching, and confirmation.</p><a href="diagram.html?diagram=trade">Explore BPMN diagram ↗</a></div></article>
+          </div>
+        </div>
       </div>
     </section>
 

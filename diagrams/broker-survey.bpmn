@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?><bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_SSI_Survey_4_Lanes" targetNamespace="https://example.org/illustrative-bpmn" exporter="Trần Lê Mạnh Tuấn Portfolio" modeler:executionPlatform="Camunda Cloud" exporterVersion="public-illustrative">
+
+  <bpmn:collaboration id="Collaboration_SSI_Survey_4_Lanes">
+    <bpmn:participant id="Participant_SSI_Survey_4_Lanes" name="Broker Customer Survey (Illustrative)" processRef="Process_SSI_Survey_4_Lanes"/>
+  </bpmn:collaboration>
+
+  <bpmn:process id="Process_SSI_Survey_4_Lanes" name="Broker Customer Survey (Illustrative)" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_SSI_Survey_4_Lanes">
+      <bpmn:lane id="Lane_ProductOwner" name="Product Owner">
+        <bpmn:flowNodeRef>StartEvent_Start</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_DefinePurpose</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_DefineTargetCustomers</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_DraftQuestions</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_FinalApproveLogic</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CreateSendTicket</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ReviewResultsActions</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Done</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Marketing" name="Marketing">
+        <bpmn:flowNodeRef>Task_ValidateContactTiming</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ReviewWordingTone</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ApprovePresentation</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Data" name="Data">
+        <bpmn:flowNodeRef>Task_ValidateExportCustomerList</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_PrepareFormTracking</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_CSKH" name="CSKH / Operation">
+        <bpmn:flowNodeRef>Task_SendSurvey</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SendLog</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="StartEvent_Start" name="Start">
+      <bpmn:outgoing>Flow_Start_To_DefinePurpose</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:task id="Task_DefinePurpose" name="1. Xác định mục tiêu khảo sát
+Mục tiêu, giả thuyết, quyết định cần đưa ra, tín hiệu cần thu thập">
+      <bpmn:incoming>Flow_Start_To_DefinePurpose</bpmn:incoming>
+      <bpmn:outgoing>Flow_DefinePurpose_To_DefineTargetCustomers</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_DefineTargetCustomers" name="2. Xác định tệp khách hàng
+Nhóm KH cần khảo sát, trigger gửi, rule chọn tệp">
+      <bpmn:incoming>Flow_DefinePurpose_To_DefineTargetCustomers</bpmn:incoming>
+      <bpmn:outgoing>Flow_DefineTargetCustomers_To_ValidateContactTiming</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_ValidateContactTiming" name="Marketing góp ý tệp và thời điểm liên hệ
+Mức độ phù hợp để liên hệ KH tại thời điểm gửi">
+      <bpmn:incoming>Flow_DefineTargetCustomers_To_ValidateContactTiming</bpmn:incoming>
+      <bpmn:outgoing>Flow_ValidateContactTiming_To_ValidateExportCustomerList</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_ValidateExportCustomerList" name="Data validate / xuất tệp KH
+Kiểm tra rule, nguồn dữ liệu, exclusion, frequency cap">
+      <bpmn:incoming>Flow_ValidateContactTiming_To_ValidateExportCustomerList</bpmn:incoming>
+      <bpmn:outgoing>Flow_ValidateExportCustomerList_To_DraftQuestions</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_DraftQuestions" name="3. Soạn câu hỏi bản nháp
+Ý nghĩa, cấu trúc khảo sát, chỉ số cần đo">
+      <bpmn:incoming>Flow_ValidateExportCustomerList_To_DraftQuestions</bpmn:incoming>
+      <bpmn:outgoing>Flow_DraftQuestions_To_ReviewWordingTone</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_ReviewWordingTone" name="4. Review wording và tone
+Chỉnh câu chữ, tone of voice, độ rõ ràng, brand fit">
+      <bpmn:incoming>Flow_DraftQuestions_To_ReviewWordingTone</bpmn:incoming>
+      <bpmn:outgoing>Flow_ReviewWordingTone_To_FinalApproveLogic</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_FinalApproveLogic" name="5A. Product Owner phê duyệt logic
+Chốt ý nghĩa câu hỏi, metric, logic khảo sát">
+      <bpmn:incoming>Flow_ReviewWordingTone_To_FinalApproveLogic</bpmn:incoming>
+      <bpmn:outgoing>Flow_FinalApproveLogic_To_ApprovePresentation</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_ApprovePresentation" name="5B. Marketing phê duyệt trình bày
+Chốt format, content, banner/popup/email nếu có">
+      <bpmn:incoming>Flow_FinalApproveLogic_To_ApprovePresentation</bpmn:incoming>
+      <bpmn:outgoing>Flow_ApprovePresentation_To_PrepareFormTracking</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_PrepareFormTracking" name="Data chuẩn bị form / link / tracking nếu cần
+Đảm bảo tệp KH, link survey và tracking sẵn sàng">
+      <bpmn:incoming>Flow_ApprovePresentation_To_PrepareFormTracking</bpmn:incoming>
+      <bpmn:outgoing>Flow_PrepareFormTracking_To_CreateSendTicket</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_CreateSendTicket" name="6A. Tạo ticket gửi khảo sát
+Đính kèm nội dung, link, tệp KH, thời gian gửi, kênh gửi">
+      <bpmn:incoming>Flow_PrepareFormTracking_To_CreateSendTicket</bpmn:incoming>
+      <bpmn:outgoing>Flow_CreateSendTicket_To_SendSurvey</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_SendSurvey" name="6B. Gửi khảo sát
+Gửi qua notification, popup, email hoặc kênh được chốt">
+      <bpmn:incoming>Flow_CreateSendTicket_To_SendSurvey</bpmn:incoming>
+      <bpmn:outgoing>Flow_SendSurvey_To_SendLog</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_SendLog" name="Gửi log kết quả gửi
+Target, delivered, lỗi gửi, thời điểm gửi">
+      <bpmn:incoming>Flow_SendSurvey_To_SendLog</bpmn:incoming>
+      <bpmn:outgoing>Flow_SendLog_To_ReviewResultsActions</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="Task_ReviewResultsActions" name="7. Tổng hợp kết quả và action
+Đọc kết quả, tổng hợp insight, xác định action và follow-up">
+      <bpmn:incoming>Flow_SendLog_To_ReviewResultsActions</bpmn:incoming>
+      <bpmn:outgoing>Flow_ReviewResultsActions_To_End</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:endEvent id="EndEvent_Done" name="Hoàn tất survey">
+      <bpmn:incoming>Flow_ReviewResultsActions_To_End</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_Start_To_DefinePurpose" sourceRef="StartEvent_Start" targetRef="Task_DefinePurpose"/>
+    <bpmn:sequenceFlow id="Flow_DefinePurpose_To_DefineTargetCustomers" sourceRef="Task_DefinePurpose" targetRef="Task_DefineTargetCustomers"/>
+    <bpmn:sequenceFlow id="Flow_DefineTargetCustomers_To_ValidateContactTiming" sourceRef="Task_DefineTargetCustomers" targetRef="Task_ValidateContactTiming"/>
+    <bpmn:sequenceFlow id="Flow_ValidateContactTiming_To_ValidateExportCustomerList" sourceRef="Task_ValidateContactTiming" targetRef="Task_ValidateExportCustomerList"/>
+    <bpmn:sequenceFlow id="Flow_ValidateExportCustomerList_To_DraftQuestions" sourceRef="Task_ValidateExportCustomerList" targetRef="Task_DraftQuestions"/>
+    <bpmn:sequenceFlow id="Flow_DraftQuestions_To_ReviewWordingTone" sourceRef="Task_DraftQuestions" targetRef="Task_ReviewWordingTone"/>
+    <bpmn:sequenceFlow id="Flow_ReviewWordingTone_To_FinalApproveLogic" sourceRef="Task_ReviewWordingTone" targetRef="Task_FinalApproveLogic"/>
+    <bpmn:sequenceFlow id="Flow_FinalApproveLogic_To_ApprovePresentation" sourceRef="Task_FinalApproveLogic" targetRef="Task_ApprovePresentation"/>
+    <bpmn:sequenceFlow id="Flow_ApprovePresentation_To_PrepareFormTracking" sourceRef="Task_ApprovePresentation" targetRef="Task_PrepareFormTracking"/>
+    <bpmn:sequenceFlow id="Flow_PrepareFormTracking_To_CreateSendTicket" sourceRef="Task_PrepareFormTracking" targetRef="Task_CreateSendTicket"/>
+    <bpmn:sequenceFlow id="Flow_CreateSendTicket_To_SendSurvey" sourceRef="Task_CreateSendTicket" targetRef="Task_SendSurvey"/>
+    <bpmn:sequenceFlow id="Flow_SendSurvey_To_SendLog" sourceRef="Task_SendSurvey" targetRef="Task_SendLog"/>
+    <bpmn:sequenceFlow id="Flow_SendLog_To_ReviewResultsActions" sourceRef="Task_SendLog" targetRef="Task_ReviewResultsActions"/>
+    <bpmn:sequenceFlow id="Flow_ReviewResultsActions_To_End" sourceRef="Task_ReviewResultsActions" targetRef="EndEvent_Done"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_SSI_Survey_4_Lanes">
+    <bpmndi:BPMNPlane id="BPMNPlane_SSI_Survey_4_Lanes" bpmnElement="Collaboration_SSI_Survey_4_Lanes">
+      <bpmndi:BPMNShape id="Participant_SSI_Survey_4_Lanes_di" bpmnElement="Participant_SSI_Survey_4_Lanes" isHorizontal="true">
+        <dc:Bounds x="80" y="60" width="2860" height="700"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="Lane_ProductOwner_di" bpmnElement="Lane_ProductOwner" isHorizontal="true">
+        <dc:Bounds x="110" y="60" width="2830" height="190"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Marketing_di" bpmnElement="Lane_Marketing" isHorizontal="true">
+        <dc:Bounds x="110" y="250" width="2830" height="170"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Data_di" bpmnElement="Lane_Data" isHorizontal="true">
+        <dc:Bounds x="110" y="420" width="2830" height="170"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_CSKH_di" bpmnElement="Lane_CSKH" isHorizontal="true">
+        <dc:Bounds x="110" y="590" width="2830" height="170"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="StartEvent_Start_di" bpmnElement="StartEvent_Start">
+        <dc:Bounds x="170" y="137" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_DefinePurpose_di" bpmnElement="Task_DefinePurpose">
+        <dc:Bounds x="250" y="115" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_DefineTargetCustomers_di" bpmnElement="Task_DefineTargetCustomers">
+        <dc:Bounds x="460" y="115" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ValidateContactTiming_di" bpmnElement="Task_ValidateContactTiming">
+        <dc:Bounds x="680" y="295" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ValidateExportCustomerList_di" bpmnElement="Task_ValidateExportCustomerList">
+        <dc:Bounds x="930" y="465" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_DraftQuestions_di" bpmnElement="Task_DraftQuestions">
+        <dc:Bounds x="1170" y="115" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReviewWordingTone_di" bpmnElement="Task_ReviewWordingTone">
+        <dc:Bounds x="1390" y="295" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_FinalApproveLogic_di" bpmnElement="Task_FinalApproveLogic">
+        <dc:Bounds x="1630" y="115" width="180" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ApprovePresentation_di" bpmnElement="Task_ApprovePresentation">
+        <dc:Bounds x="1850" y="295" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PrepareFormTracking_di" bpmnElement="Task_PrepareFormTracking">
+        <dc:Bounds x="2090" y="465" width="200" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CreateSendTicket_di" bpmnElement="Task_CreateSendTicket">
+        <dc:Bounds x="2340" y="115" width="180" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendSurvey_di" bpmnElement="Task_SendSurvey">
+        <dc:Bounds x="2360" y="635" width="180" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendLog_di" bpmnElement="Task_SendLog">
+        <dc:Bounds x="2580" y="635" width="170" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReviewResultsActions_di" bpmnElement="Task_ReviewResultsActions">
+        <dc:Bounds x="2590" y="115" width="190" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Done_di" bpmnElement="EndEvent_Done">
+        <dc:Bounds x="2840" y="137" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Flow_Start_To_DefinePurpose_di" bpmnElement="Flow_Start_To_DefinePurpose">
+        <di:waypoint x="206" y="155"/>
+        <di:waypoint x="250" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DefinePurpose_To_DefineTargetCustomers_di" bpmnElement="Flow_DefinePurpose_To_DefineTargetCustomers">
+        <di:waypoint x="420" y="155"/>
+        <di:waypoint x="460" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DefineTargetCustomers_To_ValidateContactTiming_di" bpmnElement="Flow_DefineTargetCustomers_To_ValidateContactTiming">
+        <di:waypoint x="630" y="155"/>
+        <di:waypoint x="655" y="155"/>
+        <di:waypoint x="655" y="335"/>
+        <di:waypoint x="680" y="335"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ValidateContactTiming_To_ValidateExportCustomerList_di" bpmnElement="Flow_ValidateContactTiming_To_ValidateExportCustomerList">
+        <di:waypoint x="870" y="335"/>
+        <di:waypoint x="900" y="335"/>
+        <di:waypoint x="900" y="505"/>
+        <di:waypoint x="930" y="505"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ValidateExportCustomerList_To_DraftQuestions_di" bpmnElement="Flow_ValidateExportCustomerList_To_DraftQuestions">
+        <di:waypoint x="1120" y="505"/>
+        <di:waypoint x="1145" y="505"/>
+        <di:waypoint x="1145" y="155"/>
+        <di:waypoint x="1170" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_DraftQuestions_To_ReviewWordingTone_di" bpmnElement="Flow_DraftQuestions_To_ReviewWordingTone">
+        <di:waypoint x="1340" y="155"/>
+        <di:waypoint x="1365" y="155"/>
+        <di:waypoint x="1365" y="335"/>
+        <di:waypoint x="1390" y="335"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ReviewWordingTone_To_FinalApproveLogic_di" bpmnElement="Flow_ReviewWordingTone_To_FinalApproveLogic">
+        <di:waypoint x="1580" y="335"/>
+        <di:waypoint x="1605" y="335"/>
+        <di:waypoint x="1605" y="155"/>
+        <di:waypoint x="1630" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_FinalApproveLogic_To_ApprovePresentation_di" bpmnElement="Flow_FinalApproveLogic_To_ApprovePresentation">
+        <di:waypoint x="1810" y="155"/>
+        <di:waypoint x="1825" y="155"/>
+        <di:waypoint x="1825" y="335"/>
+        <di:waypoint x="1850" y="335"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ApprovePresentation_To_PrepareFormTracking_di" bpmnElement="Flow_ApprovePresentation_To_PrepareFormTracking">
+        <di:waypoint x="2040" y="335"/>
+        <di:waypoint x="2065" y="335"/>
+        <di:waypoint x="2065" y="505"/>
+        <di:waypoint x="2090" y="505"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_PrepareFormTracking_To_CreateSendTicket_di" bpmnElement="Flow_PrepareFormTracking_To_CreateSendTicket">
+        <di:waypoint x="2290" y="505"/>
+        <di:waypoint x="2315" y="505"/>
+        <di:waypoint x="2315" y="155"/>
+        <di:waypoint x="2340" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_CreateSendTicket_To_SendSurvey_di" bpmnElement="Flow_CreateSendTicket_To_SendSurvey">
+        <di:waypoint x="2520" y="155"/>
+        <di:waypoint x="2545" y="155"/>
+        <di:waypoint x="2545" y="615"/>
+        <di:waypoint x="2450" y="615"/>
+        <di:waypoint x="2450" y="635"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_SendSurvey_To_SendLog_di" bpmnElement="Flow_SendSurvey_To_SendLog">
+        <di:waypoint x="2540" y="675"/>
+        <di:waypoint x="2580" y="675"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_SendLog_To_ReviewResultsActions_di" bpmnElement="Flow_SendLog_To_ReviewResultsActions">
+        <di:waypoint x="2750" y="675"/>
+        <di:waypoint x="2810" y="675"/>
+        <di:waypoint x="2810" y="155"/>
+        <di:waypoint x="2780" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ReviewResultsActions_To_End_di" bpmnElement="Flow_ReviewResultsActions_To_End">
+        <di:waypoint x="2780" y="155"/>
+        <di:waypoint x="2840" y="155"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
